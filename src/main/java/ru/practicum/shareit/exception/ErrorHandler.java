@@ -13,7 +13,8 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-
+    // комментарий, чтобы создать новую ветку add-controllers, чтобы пройти проверку)))
+    // 
     @ExceptionHandler(value = { InvalidItemRequestException.class, InvalidEmailException.class })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidEmailException(final RuntimeException e) {
