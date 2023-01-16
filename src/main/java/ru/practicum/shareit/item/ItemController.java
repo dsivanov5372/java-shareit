@@ -54,6 +54,6 @@ public class ItemController {
     @PatchMapping("/{itemId}")
     public Item updateItem(@RequestHeader(value = header, required = true) Long userId,
                            @PathVariable("itemId") Long itemId, @Valid @RequestBody ItemDto item) {
-        return service.updateItem(userId, itemId, item);           
+        return service.updateItem(userId, itemId, item);
     }
 }
