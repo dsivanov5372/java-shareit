@@ -13,21 +13,16 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler
+
+    @ExceptionHandler(value = { InvalidItemRequestException.class, InvalidEmailException.class })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInvalidEmailException(final InvalidEmailException e) {
+    public ErrorResponse handleInvalidEmailException(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(final UserNotFoundException e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInvalidItemRequest(final InvalidItemRequestException e) {
         return new ErrorResponse(e.getMessage());
     }
 }
