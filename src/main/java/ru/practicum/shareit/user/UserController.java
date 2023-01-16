@@ -26,13 +26,13 @@ public class UserController {
     }
 
     @PostMapping
-    public User addUser(@RequestBody UserDto user) 
+    public User addUser(@RequestBody UserDto user)
         throws InvalidEmailException, UserAlreadyRegisteredException {
         return service.addUser(user);
     }
 
     @PatchMapping("/{userId}")
-    public User update(@PathVariable Long userId, @RequestBody UserDto userDto) 
+    public User update(@PathVariable Long userId, @RequestBody UserDto userDto)
         throws InvalidEmailException, UserAlreadyRegisteredException {
         return service.updateUser(userId, userDto);
     }
