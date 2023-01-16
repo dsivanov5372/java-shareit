@@ -29,7 +29,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item addItem(ItemDto item, Long userId) 
+    public Item addItem(ItemDto item, Long userId)
         throws UserNotFoundException, InvalidItemRequestException {
         checkUserId(userId);
         if (item.getName() == null || item.getName().isBlank() ||
@@ -62,5 +62,4 @@ public class ItemServiceImpl implements ItemService {
         item.setId(itemId);
         return itemDao.updateItem(item, userId);
     }
-    
 }
