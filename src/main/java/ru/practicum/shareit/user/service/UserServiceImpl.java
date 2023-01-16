@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User addUser(UserDto user) 
+    public User addUser(UserDto user)
         throws InvalidEmailException, UserAlreadyRegisteredException {
         String email = user.getEmail();
         if (email == null || !isEmail(email)) {
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(Long userId, UserDto userDto) 
+    public User updateUser(Long userId, UserDto userDto)
         throws InvalidEmailException, UserAlreadyRegisteredException {
         if (userDto.getEmail() != null && !isEmail(userDto.getEmail())) {
             throw new InvalidEmailException("Invalid email address");
