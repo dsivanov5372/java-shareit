@@ -13,7 +13,6 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-
     @ExceptionHandler(value = { InvalidItemRequestException.class, InvalidEmailException.class })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidEmailException(final RuntimeException e) {
