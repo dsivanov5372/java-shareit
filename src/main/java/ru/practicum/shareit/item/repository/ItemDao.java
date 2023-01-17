@@ -65,7 +65,7 @@ public class ItemDao {
             return null;
         }
 
-        if (toUpdate.getOwner().equals(userId)) {
+        if (toUpdate.getOwner().compareTo(userId) != 0) {
             throw new UserNotFoundException("User is not an owner");
         }
         if (itemDto.getName() != null) {
