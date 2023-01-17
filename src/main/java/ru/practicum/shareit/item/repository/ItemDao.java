@@ -26,7 +26,7 @@ public class ItemDao {
     public List<Item> findAllByUser(Long userId) {
         List<Item> result = new ArrayList<>();
         items.values().stream().forEach(item -> {
-            if (item.getOwner() == userId) {
+            if (item.getOwner().equals(userId)) {
                 result.add(item);
             }
         });
@@ -37,7 +37,7 @@ public class ItemDao {
     public Item findItemById(Long itemId) {
         return items.values()
                     .stream()
-                    .filter(item -> item.getId() == itemId)
+                    .filter(item -> item.getId().equals(itemId))
                     .findFirst()
                     .get();
     }
@@ -59,12 +59,13 @@ public class ItemDao {
     }
 
     public Item updateItem(ItemDto itemDto, Long userId) throws UserNotFoundException {
-        Item toUpdate = items.values().stream().filter(obj -> obj.getId() == itemDto.getId()).findFirst().get();
+        Item toUpdate = items.values().stream().filter(obj -> obj.getId()
+                             .equals(itemDto.getId())).findFirst().get();
         if (toUpdate == null) {
             return null;
         }
 
-        if (toUpdate.getOwner() != userId) {
+        if (toUpdate.getOwner().equals(userId)) {
             throw new UserNotFoundException("User is not an owner");
         }
         if (itemDto.getName() != null) {
