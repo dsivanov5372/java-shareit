@@ -75,7 +75,7 @@ public class ItemServiceImpl implements ItemService {
     public Item findItemById(Long userId, Long itemId) throws UserNotFoundException {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException("Item nof found!"));
 
-        if (item.getOwner() == userId) {
+        if (item.getOwner().equals(userId)) {
             Booking last = bookingRepository.findTopBookingByItemIdOrderByStartAsc(itemId);
             Booking next = bookingRepository.findFirstBookingByItemIdAndStartAfterOrderByStartAsc(itemId, LocalDateTime.now());
             if (last != null) {
@@ -103,7 +103,7 @@ public class ItemServiceImpl implements ItemService {
         checkUserId(userId);
 
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException("Item nof found!"));
-        if (item.getOwner() != userId) {
+        if (!item.getOwner().equals(userId)) {
             throw new UserNotFoundException("User is not an owner!");
         }
 

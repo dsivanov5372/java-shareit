@@ -33,7 +33,7 @@ public class BookingServiceImpl implements BookingService {
         User owner = userService.getUser(item.getOwner());
         User booker = userService.getUser(userId);
 
-        if (owner.getId() == booker.getId()) {
+        if (owner.getId().equals(booker.getId())) {
             throw new UserNotFoundException("Owner can not book his item!");
         }
 
@@ -66,7 +66,7 @@ public class BookingServiceImpl implements BookingService {
     public Booking updateBooking(Long userId, Boolean isApproved, Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new BookingException("Booking not found!"));
 
-        if (booking.getItem().getOwner() != userId) {
+        if (!booking.getItem().getOwner().equals(userId)) {
             throw new UserNotFoundException("User is not an owner!");
         }
 
@@ -90,8 +90,8 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                                            .orElseThrow(() -> new BookingNotFoundException("Booking not found!"));
 
-        if (booking.getBooker().getId() != userId &&
-            booking.getItem().getOwner() != userId) {
+        if (!booking.getBooker().getId().equals(userId) &&
+            !booking.getItem().getOwner().equals(userId)) {
             throw new UserNotFoundException("User is not an owner!");
         }
 
