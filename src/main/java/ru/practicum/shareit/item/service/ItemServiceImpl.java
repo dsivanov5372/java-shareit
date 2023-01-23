@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
@@ -95,6 +96,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> findAllByText(String text) {
+        if (text == null || text.isBlank()) {
+            return new ArrayList<>();
+        }
         return itemRepository.searchItemByText(text);
     }
 
