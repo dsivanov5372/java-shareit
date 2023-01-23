@@ -1,6 +1,6 @@
 package ru.practicum.shareit.item.model;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,33 +15,29 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@Builder
 @Entity
+@Table(name = "comments", schema = "public")
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "items", schema = "public")
-public class Item {
+@Builder
+@Data
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "name", nullable = false)
-    String name;
+    @Column(name = "text", nullable = false)
+    String text;
 
-    @Column(name = "description", nullable = false)
-    String description;
+    @Transient
+    String authorName;
 
-    @Column(name = "is_available", nullable = false)
-    boolean available;
+    @Column(name = "author_id", nullable = false)
+    Long authorId;
 
-    @Column(name = "owner_id", nullable = false)
-    Long owner;
-    
-    @Transient
-    BookingInfo lastBooking;
-    @Transient
-    BookingInfo nextBooking;
-    @Transient
-    List<Comment> comments;
+    @Column(name = "item_id", nullable = false)
+    Long itemId;
+
+    @Column(name = "created", nullable = false)
+    LocalDateTime created;
 }
