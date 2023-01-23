@@ -37,7 +37,7 @@ public class Item {
 
     @Column(name = "owner_id", nullable = false)
     Long owner;
-    
+
     @Transient
     BookingInfo lastBooking;
     @Transient

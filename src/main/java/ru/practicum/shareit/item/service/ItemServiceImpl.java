@@ -64,7 +64,7 @@ public class ItemServiceImpl implements ItemService {
             if (next != null) {
                 item.setNextBooking(BookingInfo.builder().id(next.getId()).bookerId(next.getBooker().getId()).build());
             }
-    
+
             item.setComments(commentRepository.findCommentsByItemId(item.getId()));
         }
 
@@ -131,7 +131,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
         Booking booking = bookingRepository.findFirstBookingByItemIdAndBookerIdAndStatusOrderByStartAsc(itemId, userId, Status.APPROVED)
                                            .orElseThrow(() -> new BookingException("Booking not found!"));
-        
+
         if (booking.getStart().isAfter(LocalDateTime.now())) {
             throw new InvalidCommentDateException("Item not booked yet!");
         }

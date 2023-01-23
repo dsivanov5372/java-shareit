@@ -11,8 +11,8 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 
 public interface BookingRepository extends JpaRepository<Booking, Long>{
-    @Query(value = "SELECT b FROM Booking b WHERE b.item.id IN (SELECT DISTINCT i.id FROM Item i WHERE i.owner = ?1 )" +
-    "ORDER BY b.start DESC")
+    @Query(value = "SELECT b FROM Booking b WHERE b.item.id IN (SELECT DISTINCT i.id FROM Item i WHERE i.owner = ?1)" +
+                   "ORDER BY b.start DESC")
     List<Booking> findBookingsByOwnerId(long ownerId);
 
     Booking findFirstBookingByItemIdAndStartAfterOrderByStartAsc(long itemId, LocalDateTime start);

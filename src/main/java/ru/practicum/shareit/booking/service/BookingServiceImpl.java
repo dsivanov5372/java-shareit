@@ -65,7 +65,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking updateBooking(Long userId, Boolean isApproved, Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new BookingException("Booking not found!"));
-        
+
         if (booking.getItem().getOwner() != userId) {
             throw new UserNotFoundException("User is not an owner!");
         }
