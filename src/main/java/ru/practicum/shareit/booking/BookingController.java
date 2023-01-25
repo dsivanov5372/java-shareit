@@ -27,33 +27,33 @@ public class BookingController {
     private final BookingService service;
 
     @PostMapping
-    public Booking addBooking(@RequestHeader(value = header, required = true) Long userId,
+    public Booking addBooking(@RequestHeader(header) Long userId,
                               @RequestBody BookingDto booking) {
         return service.addBooking(userId, booking);
     }
 
     @PatchMapping("/{bookingId}")
-    public Booking updateBooking(@RequestHeader(value = header, required = true) Long userId,
+    public Booking updateBooking(@RequestHeader(header) Long userId,
                                  @RequestParam("approved") Boolean isApproved,
                                  @PathVariable("bookingId") Long bookingId) {
         return service.updateBooking(userId, isApproved, bookingId);
     }
 
     @GetMapping("/{bookingId}")
-    public Booking getBookingById(@RequestHeader(value = header, required = true) Long userId,
+    public Booking getBookingById(@RequestHeader(header) Long userId,
                                   @PathVariable("bookingId") Long bookingId) {
         return service.getBookingById(userId, bookingId);
     }
 
     @GetMapping
-    public List<Booking> getAllByUserId(@RequestHeader(value = header, required = true) Long userId,
+    public List<Booking> getAllByUserId(@RequestHeader(header) Long userId,
                                         @RequestParam(value = "state", defaultValue = "ALL") String state) {
         checkState(state);
         return service.getAllByUserId(userId, State.valueOf(state));
     }
 
     @GetMapping("/owner")
-    public List<Booking> getAllByOwnerId(@RequestHeader(value = header, required = true) Long userId,
+    public List<Booking> getAllByOwnerId(@RequestHeader(header) Long userId,
                                          @RequestParam(value = "state", defaultValue = "ALL") String state) {
         checkState(state);
         return service.getAllByOwnerId(userId, State.valueOf(state));

@@ -109,26 +109,7 @@ public class BookingServiceImpl implements BookingService {
             throw new BookingException("User does not have bookings!");
         }
 
-        switch (state) {
-            case CURRENT:
-                return bookings.stream().filter(booking -> booking.getStart().isBefore(LocalDateTime.now()) &&
-                        booking.getEnd().isAfter(LocalDateTime.now())).collect(Collectors.toList());
-            case PAST:
-                return bookings.stream().filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
-                               .collect(Collectors.toList());
-            case FUTURE:
-                return bookings.stream().filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
-                               .collect(Collectors.toList());
-            case WAITING:
-                return bookings.stream().filter(booking -> booking.getStatus().equals(Status.WAITING))
-                               .collect(Collectors.toList());
-            case REJECTED:
-                return bookings.stream().filter(booking -> booking.getStatus().equals(Status.REJECTED))
-                               .collect(Collectors.toList());
-            default:
-        }
-
-        return bookings;
+        return filterBookingsByState(bookings, state);
     }
 
     @Override
@@ -142,6 +123,10 @@ public class BookingServiceImpl implements BookingService {
             throw new BookingException("User does not have bookings!");
         }
 
+        return filterBookingsByState(bookings, state);
+    }
+
+    private List<Booking> filterBookingsByState(List<Booking> bookings, State state) {
         switch (state) {
             case CURRENT:
                 return bookings.stream().filter(booking -> booking.getStart().isBefore(LocalDateTime.now()) &&
@@ -161,6 +146,6 @@ public class BookingServiceImpl implements BookingService {
             default:
         }
 
-        return bookings;
+        return bookings;        
     }
 }
