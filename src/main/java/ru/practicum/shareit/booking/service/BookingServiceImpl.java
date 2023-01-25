@@ -146,6 +146,6 @@ public class BookingServiceImpl implements BookingService {
             default:
         }
 
-        return bookings;        
+        return bookings;
     }
 }
