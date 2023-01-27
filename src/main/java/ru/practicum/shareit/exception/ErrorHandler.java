@@ -1,5 +1,6 @@
 package ru.practicum.shareit.exception;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -13,15 +14,23 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler(value = { InvalidItemRequestException.class, InvalidEmailException.class })
+    @ExceptionHandler(value = { InvalidItemRequestException.class,
+                                InvalidEmailException.class,
+                                EmptyCommentException.class,
+                                InvalidCommentDateException.class,
+                                BookingException.class,
+                                InvalidStateException.class,
+                                ConstraintViolationException.class })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidEmailException(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(value = { UserNotFoundException.class,
+                                BookingNotFoundException.class,
+                                ItemNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUserNotFoundException(final UserNotFoundException e) {
+    public ErrorResponse handleUserNotFoundException(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());
     }
 }

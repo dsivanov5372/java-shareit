@@ -1,6 +1,9 @@
 package ru.practicum.shareit.user;
 
 import java.util.List;
+
+import javax.validation.Valid;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,13 +29,13 @@ public class UserController {
     }
 
     @PostMapping
-    public User addUser(@RequestBody UserDto user)
+    public User addUser(@Valid @RequestBody UserDto user)
         throws InvalidEmailException, UserAlreadyRegisteredException {
         return service.addUser(user);
     }
 
     @PatchMapping("/{userId}")
-    public User update(@PathVariable Long userId, @RequestBody UserDto userDto)
+    public User update(@Valid @PathVariable Long userId, @RequestBody UserDto userDto)
         throws InvalidEmailException, UserAlreadyRegisteredException {
         return service.updateUser(userId, userDto);
     }
