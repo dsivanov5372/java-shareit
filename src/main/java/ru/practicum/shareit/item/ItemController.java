@@ -31,34 +31,38 @@ public class ItemController {
 
     @PostMapping
     public Item addItem(@Valid @RequestBody ItemDto item,
-                        @RequestHeader(value = header, required = true) Long userId) {
+                        @RequestHeader(header) Long userId) {
         return service.addItem(item, userId);
     }
 
     @GetMapping
-    public List<Item> findAllByUserId(@RequestHeader(value = header, required = true) Long userId) {
-        return service.findAllByUserId(userId);
+    public List<Item> findAllByUserId(@RequestParam(required = false) Integer from,
+                                      @RequestParam(required = false) Integer size,
+                                      @RequestHeader(header) Long userId) {
+        return service.findAllByUserId(from, size, userId);
     }
 
     @GetMapping("/{itemId}")
-    public Item findItemById(@RequestHeader(value = "X-Sharer-User-Id") Long userId,
+    public Item findItemById(@RequestHeader(header) Long userId,
                              @PathVariable("itemId") Long itemId) {
         return service.findItemById(userId, itemId);
     }
 
     @GetMapping("/search")
-    public List<Item> findAllByText(@RequestParam("text") String text) {
-        return service.findAllByText(text);
+    public List<Item> findAllByText(@RequestParam(required = false) Integer from,
+                                    @RequestParam(required = false) Integer size,
+                                    @RequestParam("text") String text) {
+        return service.findAllByText(from, size, text);
     }
 
     @PatchMapping("/{itemId}")
-    public Item updateItem(@RequestHeader(value = header, required = true) Long userId,
+    public Item updateItem(@RequestHeader(header) Long userId,
                            @PathVariable("itemId") Long itemId, @Valid @RequestBody ItemDto item) {
         return service.updateItem(userId, itemId, item);
     }
 
     @PostMapping("/{itemId}/comment")
-    public Comment addComment(@RequestHeader(value = header, required = true) Long userId,
+    public Comment addComment(@RequestHeader(header) Long userId,
                               @PathVariable("itemId") Long itemId,
                               @RequestBody CommentDto comment) {
         return service.addComment(userId, itemId, comment);

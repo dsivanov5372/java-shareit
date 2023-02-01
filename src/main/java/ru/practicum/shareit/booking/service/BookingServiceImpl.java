@@ -16,6 +16,7 @@ import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.paginator.Paginator;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -99,7 +100,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllByUserId(Long userId, State state) {
+    public List<Booking> getAllByUserId(Integer from, Integer size, Long userId, State state) {
         if (userService.getUser(userId) == null) {
             throw new UserNotFoundException("User not found!");
         }
@@ -109,11 +110,11 @@ public class BookingServiceImpl implements BookingService {
             throw new BookingException("User does not have bookings!");
         }
 
-        return filterBookingsByState(bookings, state);
+        return Paginator.paginate(from, size, filterBookingsByState(bookings, state));
     }
 
     @Override
-    public List<Booking> getAllByOwnerId(Long userId, State state) {
+    public List<Booking> getAllByOwnerId(Integer from, Integer size, Long userId, State state) {
         if (userService.getUser(userId) == null) {
             throw new UserNotFoundException("User not found!");
         }
@@ -123,7 +124,7 @@ public class BookingServiceImpl implements BookingService {
             throw new BookingException("User does not have bookings!");
         }
 
-        return filterBookingsByState(bookings, state);
+        return Paginator.paginate(from, size, filterBookingsByState(bookings, state));
     }
 
     private List<Booking> filterBookingsByState(List<Booking> bookings, State state) {

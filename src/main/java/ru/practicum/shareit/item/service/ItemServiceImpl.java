@@ -22,6 +22,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemMapper;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.paginator.Paginator;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -33,7 +34,7 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
 
-    public void checkUserId(Long userId) throws UserNotFoundException {
+    private void checkUserId(Long userId) throws UserNotFoundException {
         if (userRepository.findById(userId).isEmpty()) {
             throw new UserNotFoundException("User not found!");
         }
@@ -48,11 +49,12 @@ public class ItemServiceImpl implements ItemService {
             item.getAvailable() == null) {
             throw new InvalidItemRequestException("Invalid item fields");
         }
-        return itemRepository.save(ItemMapper.toItem(item, userId));
+        Item toSave = ItemMapper.toItem(item, userId);
+        return itemRepository.save(toSave);
     }
 
     @Override
-    public List<Item> findAllByUserId(Long userId) throws UserNotFoundException {
+    public List<Item> findAllByUserId(Integer from, Integer size, Long userId) throws UserNotFoundException {
         checkUserId(userId);
 
         List<Item> items = itemRepository.findByOwnerOrderById(userId);
@@ -69,7 +71,7 @@ public class ItemServiceImpl implements ItemService {
             item.setComments(commentRepository.findCommentsByItemId(item.getId()));
         }
 
-        return items;
+        return Paginator.paginate(from, size, items);
     }
 
     @Override
@@ -95,11 +97,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> findAllByText(String text) {
+    public List<Item> findAllByText(Integer from, Integer size, String text) {
         if (text == null || text.isBlank()) {
             return new ArrayList<>();
         }
-        return itemRepository.searchItemByText(text);
+        return Paginator.paginate(from, size, itemRepository.searchItemByText(text));
     }
 
     @Override
@@ -119,6 +121,9 @@ public class ItemServiceImpl implements ItemService {
         }
         if (itemDto.getAvailable() != null) {
             item.setAvailable(itemDto.getAvailable());
+        }
+        if (itemDto.getRequestId() != null) {
+            item.setRequestId(itemDto.getRequestId());
         }
         item = itemRepository.save(item);
 
