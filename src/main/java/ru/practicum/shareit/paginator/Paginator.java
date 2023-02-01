@@ -18,7 +18,7 @@ public class Paginator {
         if (from == null) {
             if (size == null) {
                 return list;
-            } 
+            }
             return list.stream().limit(size).collect(Collectors.toList());
         }
         if (from > list.size()) {
