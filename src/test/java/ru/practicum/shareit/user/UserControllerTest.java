@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = UserController.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class UserControllerTest {
+public class UserControllerTest {
     @Autowired
     private ObjectMapper mapper;
     @MockBean
@@ -35,7 +35,7 @@ class UserControllerTest {
     private final User user = User.builder().id(1L).name("name").email("null@null.null").build();
 
     @Test
-    public void shouldAddUser() throws Exception {
+    void shouldAddUser() throws Exception {
         when(userService.addUser(any())).thenReturn(user);
 
         mvc.perform(post("/users")
@@ -50,7 +50,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void shouldFindUserById() throws Exception {
+    void shouldFindUserById() throws Exception {
         when(userService.getUser(anyLong())).thenReturn(user);
 
         mvc.perform(get("/users/1"))
@@ -61,7 +61,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void shouldReturnAllUsers() throws Exception {
+    void shouldReturnAllUsers() throws Exception {
         when(userService.getAllUsers()).thenReturn(List.of(user));
 
         mvc.perform(get("/users"))
@@ -72,7 +72,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void shouldUpdateUser() throws Exception {
+    void shouldUpdateUser() throws Exception {
         when(userService.updateUser(anyLong(), any())).thenReturn(user);
 
         mvc.perform(patch("/users/1")
@@ -87,7 +87,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void shouldDeleteUser() throws Exception {
+    void shouldDeleteUser() throws Exception {
         mvc.perform(delete("/users/1"))
                            .andExpect(status().isOk());
     }

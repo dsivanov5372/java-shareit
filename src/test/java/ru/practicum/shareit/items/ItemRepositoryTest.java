@@ -30,29 +30,29 @@ public class ItemRepositoryTest {
     private final Item item = Item.builder().name("test item").description("test item").available(true).build();
 
     @Test
-    public void shouldFindItemWithTextInNameOrDescription() {
+    void shouldFindItemWithTextInNameOrDescription() {
         userRepository.save(user);
         item.setOwner(user.getId());
         itemRepository.save(item);
 
         List<Item> items = itemRepository.searchItemByText("eSt");
-        assertEquals(items.size(), 1);
-        assertEquals(items.get(0), item);
+        assertEquals(1, items.size());
+        assertEquals(item, items.get(0));
     }
 
     @Test
-    public void shouldFindItemByItsOwnerId() {
+    void shouldFindItemByItsOwnerId() {
         userRepository.save(user);
         item.setOwner(user.getId());
         itemRepository.save(item);
 
         List<Item> items = itemRepository.findByOwnerOrderById(item.getOwner());
-        assertEquals(items.size(), 1);
-        assertEquals(items.get(0), item);
+        assertEquals(1, items.size());
+        assertEquals(item, items.get(0));
     }
 
     @Test
-    public void shouldFindItemByRequestId() {
+    void shouldFindItemByRequestId() {
         userRepository.save(user);
         item.setOwner(user.getId());
         itemRepository.save(item);
@@ -67,7 +67,7 @@ public class ItemRepositoryTest {
         itemRepository.save(item);
 
         List<Item> items = itemRepository.findAllByRequestId(1L);
-        assertEquals(items.size(), 1);
-        assertEquals(items.get(0), item);
+        assertEquals(1, items.size());
+        assertEquals(item, items.get(0));
     }
 }

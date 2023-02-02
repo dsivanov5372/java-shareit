@@ -29,26 +29,26 @@ public class ItemRequestRepositoryTest {
     private final ItemRequest request = ItemRequest.builder().requestorId(user2.getId()).description("text").build();
 
     @Test
-    public void shouldFindAllRequestsByRequestorId() {
+    void shouldFindAllRequestsByRequestorId() {
         userRepository.save(user);
         userRepository.save(user2);
         itemRequestRepository.save(request);
         item.setRequestId(request.getId());
         itemRepository.save(item);
         List<ItemRequest> requests = itemRequestRepository.findAllByRequestorId(request.getRequestorId());
-        assertEquals(requests.size(), 1);
-        assertEquals(requests.get(0), request);
+        assertEquals(1, requests.size());
+        assertEquals(request, requests.get(0));
     }
 
     @Test
-    public void shouldFindAllRequestsNotFromRequestor() {
+    void shouldFindAllRequestsNotFromRequestor() {
         userRepository.save(user);
         userRepository.save(user2);
         itemRequestRepository.save(request);
         item.setRequestId(request.getId());
         itemRepository.save(item);
         List<ItemRequest> requests = itemRequestRepository.findAllByRequestorIdIsNot(user.getId());
-        assertEquals(requests.size(), 1);
-        assertEquals(requests.get(0), request);
+        assertEquals(1, requests.size());
+        assertEquals(request, requests.get(0));
     }
 }

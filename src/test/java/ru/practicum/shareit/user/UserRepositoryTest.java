@@ -16,7 +16,7 @@ public class UserRepositoryTest {
     private UserRepository userRepository;
 
     @Test
-    public void shouldFindUserByEmail() {
+    void shouldFindUserByEmail() {
         User user = User.builder().id(1L).name("name").email("null@null.null").build();
         userRepository.save(user);
         User result = userRepository.findByEmail("null@null.null");

@@ -55,23 +55,23 @@ public class ItemServiceTest {
                                   .build();
 
     @Test
-    public void shouldAddItemWithValidThings() {
+    void shouldAddItemWithValidThings() {
         when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(user));
         when(itemRepository.save(any())).thenReturn(item);
         ItemDto itemDto = ItemDto.builder().name("test").description("test").available(true).build();
         Item result = service.addItem(itemDto, Objects.requireNonNull(user).getId());
-        assertEquals(result, item);
+        assertEquals(item, result);
     }
 
     @Test
-    public void shouldThrowExceptionIfInvalidFields() {
+    void shouldThrowExceptionIfInvalidFields() {
         when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(user));
         RuntimeException ex = assertThrows(RuntimeException.class, () -> service.addItem(ItemDto.builder().build(), 1L));
-        assertEquals(ex.getMessage(), "Invalid item fields");
+        assertEquals("Invalid item fields", ex.getMessage());
     }
 
     @Test
-    public void shouldReturnAllItemOfOwner() {
+    void shouldReturnAllItemOfOwner() {
         when(itemRepository.findByOwnerOrderById(anyLong())).thenReturn(List.of(item));
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
         Booking last = Booking.builder().id(1L).booker(User.builder().id(2L).build()).build();
@@ -81,22 +81,22 @@ public class ItemServiceTest {
         when(bookingRepository.findFirstBookingByItemIdAndStartAfterOrderByStartAsc(anyLong(), any())).thenReturn(next);
         when(commentRepository.findCommentsByItemId(any())).thenReturn(List.of(comment));
         List<Item> items = service.findAllByUserId(null, null, Objects.requireNonNull(item).getOwner());
-        assertEquals(items.size(), 1);
-        assertEquals(items.get(0), item);
+        assertEquals(1, items.size());
+        assertEquals(item, items.get(0));
         item.setLastBooking(null);
         item.setNextBooking(null);
         item.setComments(new ArrayList<>());
     }
 
     @Test
-    public void shouldThrowExceptionIfUserNotFoundWhenGetAllItems() {
+    void shouldThrowExceptionIfUserNotFoundWhenGetAllItems() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> service.findAllByUserId(null, null, 3L));
-        assertEquals(ex.getMessage(), "User not found!");
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> service.findAllByUserId(null, null, user.getId()));
+        assertEquals("User not found!", ex.getMessage());
     }
 
     @Test
-    public void shouldFindItemById() {
+    void shouldFindItemById() {
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
         Booking last = Booking.builder().id(1L).booker(User.builder().id(2L).build()).build();
@@ -106,52 +106,52 @@ public class ItemServiceTest {
         when(bookingRepository.findFirstBookingByItemIdAndStartAfterOrderByStartAsc(anyLong(), any())).thenReturn(next);
         when(commentRepository.findCommentsByItemId(any())).thenReturn(List.of(comment));
         Item result = service.findItemById(Objects.requireNonNull(user).getId(), item.getId());
-        assertEquals(result, item);
+        assertEquals(item, result);
         item.setLastBooking(null);
         item.setNextBooking(null);
         item.setComments(new ArrayList<>());
     }
 
     @Test
-    public void shouldThrowExceptionIfItemNotFound() {
+    void shouldThrowExceptionIfItemNotFound() {
         when(itemRepository.findById(anyLong())).thenReturn(Optional.empty());
         RuntimeException ex = assertThrows(RuntimeException.class, () -> service.findItemById(3L, 3L));
-        assertEquals(ex.getMessage(), "Item nof found!");
+        assertEquals("Item nof found!", ex.getMessage());
     }
 
     @Test
-    public void shouldReturnItemsWithTextInNameOrDescription() {
+    void shouldReturnItemsWithTextInNameOrDescription() {
         when(itemRepository.searchItemByText("est")).thenReturn(List.of(item));
         List<Item> items = service.findAllByText(null, null, "est");
-        assertEquals(items.size(), 1);
-        assertEquals(items.get(0), item);
+        assertEquals(1, items.size());
+        assertEquals(item, items.get(0));
     }
 
     @Test
-    public void shouldReturnEmptyListIfNoText() {
+    void shouldReturnEmptyListIfNoText() {
         List<Item> items = service.findAllByText(null, null, " ");
         assertTrue(items.isEmpty());
     }
 
     @Test
-    public void shouldUpdateUpdateItemIfUserIsOwner() {
+    void shouldUpdateUpdateItemIfUserIsOwner() {
         when(itemRepository.findById(anyLong())).thenReturn(Optional.ofNullable(item));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(itemRepository.save(any())).thenReturn(item);
         Item result = service.updateItem(Objects.requireNonNull(item).getOwner(), item.getId(), ItemDto.builder().build());
-        assertEquals(result, item);
+        assertEquals(item, result);
     }
 
     @Test
-    public void shouldThrowExceptionIfUserIsNotAnOwner() {
+    void shouldThrowExceptionIfUserIsNotAnOwner() {
         when(itemRepository.findById(anyLong())).thenReturn(Optional.ofNullable(item));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         RuntimeException ex = assertThrows(RuntimeException.class, () -> service.updateItem(3L, 1L, ItemDto.builder().build()));
-        assertEquals(ex.getMessage(), "User is not an owner!");
+        assertEquals("User is not an owner!", ex.getMessage());
     }
 
     @Test
-    public void shouldAddCommentIfItemIsBooked() {
+    void shouldAddCommentIfItemIsBooked() {
         CommentDto commentDto = CommentDto.builder().text("text").build();
         Booking booking = Booking.builder().start(LocalDateTime.now()).build();
         when(itemRepository.findById(anyLong())).thenReturn(Optional.ofNullable(item));
@@ -161,18 +161,18 @@ public class ItemServiceTest {
         Comment comment = Comment.builder().build();
         when(commentRepository.save(any())).thenReturn(comment);
         Comment result = service.addComment(1L, 1L, commentDto);
-        assertEquals(result, comment);
+        assertEquals(comment, result);
     }
 
     @Test
-    public void shouldThrowExceptionIfEmptyComment() {
+    void shouldThrowExceptionIfEmptyComment() {
         CommentDto commentDto = CommentDto.builder().text(" ").build();
         RuntimeException ex = assertThrows(RuntimeException.class, () -> service.addComment(1L, 1L, commentDto));
-        assertEquals(ex.getMessage(), "Empty comment!");
+        assertEquals("Empty comment!", ex.getMessage());
     }
 
     @Test
-    public void shouldThrowExceptionIfItemIsNotBookedYet() {
+    void shouldThrowExceptionIfItemIsNotBookedYet() {
         CommentDto commentDto = CommentDto.builder().text("text").build();
         Booking booking = Booking.builder().start(LocalDateTime.now().plusDays(1)).build();
         when(itemRepository.findById(anyLong())).thenReturn(Optional.ofNullable(item));
@@ -180,6 +180,6 @@ public class ItemServiceTest {
         when(bookingRepository.findFirstBookingByItemIdAndBookerIdAndStatusOrderByStartAsc(anyLong(), anyLong(), any()))
                 .thenReturn(Optional.ofNullable(booking));
         RuntimeException ex = assertThrows(RuntimeException.class, () -> service.addComment(1L, 1L, commentDto));
-        assertEquals(ex.getMessage(), "Item not booked yet!");
+        assertEquals("Item not booked yet!", ex.getMessage());
     }
 }

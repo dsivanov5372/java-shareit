@@ -33,7 +33,7 @@ public class BookingRepositoryTest {
     private Item item = Item.builder().name("test item").description("test item").available(true).build();
 
     @Test
-    public void shouldFindBookingByOwnerId() {
+    void shouldFindBookingByOwnerId() {
         userRepository.save(firstUser);
         userRepository.save(secondUser);
         item.setOwner(firstUser.getId());
@@ -48,12 +48,12 @@ public class BookingRepositoryTest {
         booking = bookingRepository.save(booking);
 
         List<Booking> bookingList = bookingRepository.findBookingsByOwnerId(firstUser.getId());
-        assertEquals(bookingList.get(0), booking);
-        assertEquals(bookingList.size(), 1);
+        assertEquals(booking, bookingList.get(0));
+        assertEquals(1, bookingList.size());
     }
 
     @Test
-    public void shouldFindBookingByBookerId() {
+    void shouldFindBookingByBookerId() {
         userRepository.save(firstUser);
         userRepository.save(secondUser);
         item.setOwner(firstUser.getId());
@@ -68,12 +68,12 @@ public class BookingRepositoryTest {
         booking = bookingRepository.save(booking);
 
         List<Booking> bookingList = bookingRepository.findBookingsByUserId(secondUser.getId());
-        assertEquals(bookingList.get(0), booking);
-        assertEquals(bookingList.size(), 1);
+        assertEquals(booking, bookingList.get(0));
+        assertEquals(1, bookingList.size());
     }
 
     @Test
-    public void shouldFindLastBookingByItemId() {
+    void shouldFindLastBookingByItemId() {
         userRepository.save(firstUser);
         userRepository.save(secondUser);
         item.setOwner(firstUser.getId());
@@ -88,11 +88,11 @@ public class BookingRepositoryTest {
         booking = bookingRepository.save(booking);
 
         Booking last = bookingRepository.findTopBookingByItemIdOrderByStartAsc(item.getId());
-        assertEquals(last, booking);
+        assertEquals(booking, last);
     }
 
     @Test
-    public void shouldFindNextBookingByItemIdAndStartTime() {
+    void shouldFindNextBookingByItemIdAndStartTime() {
         userRepository.save(firstUser);
         userRepository.save(secondUser);
         item.setOwner(firstUser.getId());
@@ -109,11 +109,11 @@ public class BookingRepositoryTest {
         Booking last = bookingRepository.findFirstBookingByItemIdAndStartAfterOrderByStartAsc(item.getId(),
                                                                                               LocalDateTime.now()
                                                                                                             .minusMinutes(1));
-        assertEquals(last, booking);
+        assertEquals(booking, last);
     }
 
     @Test
-    public void shouldFindBookingByItemIdBookerIdAndStatus() {
+    void shouldFindBookingByItemIdBookerIdAndStatus() {
         userRepository.save(firstUser);
         userRepository.save(secondUser);
         item.setOwner(firstUser.getId());
@@ -131,6 +131,6 @@ public class BookingRepositoryTest {
                                                                                                                  secondUser.getId(),
                                                                                                                  Status.WAITING);
         assertFalse(result.isEmpty());
-        assertEquals(result.get(), booking);
+        assertEquals(booking, result.get());
     }
 }

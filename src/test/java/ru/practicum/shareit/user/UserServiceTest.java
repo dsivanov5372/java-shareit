@@ -29,71 +29,71 @@ public class UserServiceTest {
     private final User user = User.builder().id(1L).name("name").email("null@null.null").build();
 
     @Test
-    public void shouldAddUserIfNotRegistered() {
+    void shouldAddUserIfNotRegistered() {
         when(userRepository.findByEmail(anyString())).thenReturn(null);
         when(userRepository.save(any())).thenReturn(user);
         User result = userService.addUser(UserDto.builder().build());
-        assertEquals(result, user);
+        assertEquals(user, result);
     }
 
     @Test
-    public void shouldThrowExceptionIfUserIsRegistered() {
+    void shouldThrowExceptionIfUserIsRegistered() {
         when(userRepository.findByEmail(anyString())).thenReturn(user);
         RuntimeException ex = assertThrows(RuntimeException.class, () -> userService.addUser(UserDto.builder()
                                                                                                     .email("lol")
                                                                                                     .build()));
-        assertEquals(ex.getMessage(), "User with this email already registered");
+        assertEquals("User with this email already registered", ex.getMessage());
     }
 
     @Test
-    public void shouldDeleteUserIfRegistered() {
+    void shouldDeleteUserIfRegistered() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
         userService.deleteUser(Objects.requireNonNull(user).getId());
     }
 
     @Test
-    public void shouldThrowExceptionWhenDeleteUserIsNotExists() {
+    void shouldThrowExceptionWhenDeleteUserIsNotExists() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
         RuntimeException ex = assertThrows(RuntimeException.class, () -> userService.deleteUser(1L));
-        assertEquals(ex.getMessage(), "User not found!");
+        assertEquals("User not found!", ex.getMessage());
     }
 
     @Test
-    public void shouldReturnAllUsers() {
+    void shouldReturnAllUsers() {
         when(userRepository.findAll()).thenReturn(List.of(user));
         List<User> users = userService.getAllUsers();
-        assertEquals(users.size(), 1);
-        assertEquals(users.get(0), user);
+        assertEquals(1, users.size());
+        assertEquals(user, users.get(0));
     }
 
     @Test
-    public void shouldFindUserByIdIfExists() {
+    void shouldFindUserByIdIfExists() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
         User result = userService.getUser(1L);
-        assertEquals(result, user);
+        assertEquals(user, result);
     }
 
     @Test
-    public void shouldThrowExceptionIfUserNotFoundById() {
+    void shouldThrowExceptionIfUserNotFoundById() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
         RuntimeException ex = assertThrows(RuntimeException.class, () -> userService.getUser(3L));
-        assertEquals(ex.getMessage(), "User not found!");
+        assertEquals("User not found!", ex.getMessage());
     }
 
     @Test
-    public void shouldUpdateUserWithValidFields() {
+    void shouldUpdateUserWithValidFields() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
         when(userRepository.save(any())).thenReturn(user);
         User result = userService.updateUser(1L, UserDto.builder().build());
-        assertEquals(result, user);
+        assertEquals(user, result);
     }
 
     @Test
-    public void shouldThrowExceptionIfUpdateWithUsedEmail() {
-        when(userRepository.findByEmail(anyString())).thenReturn(user);
+    void shouldThrowExceptionIfUpdateWithUsedEmail() {
+        when(userRepository.findByEmail(anyString())).thenReturn(User.builder().id(100L).email(user.getEmail()).build());
         RuntimeException ex = assertThrows(RuntimeException.class, () -> userService.updateUser(1L, UserDto.builder()
                                                                                                                   .email(user.getEmail())
                                                                                                                   .build()));
-        assertEquals(ex.getMessage(), "Email address is used");
+        assertEquals("Email address is used", ex.getMessage());
     }
 }

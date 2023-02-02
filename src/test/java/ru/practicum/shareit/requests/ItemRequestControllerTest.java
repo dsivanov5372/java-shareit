@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = ItemRequestController.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class ItemRequestControllerTest {
+public class ItemRequestControllerTest {
 
     private final String header = "X-Sharer-User-Id";
     private final User user = User.builder().name("null").email("null2@null.null").id(2L).build();

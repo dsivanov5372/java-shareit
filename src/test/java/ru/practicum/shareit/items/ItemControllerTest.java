@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = ItemController.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class ItemControllerTest {
+public class ItemControllerTest {
     private final String header = "X-Sharer-User-Id";
     private final User user = User.builder().name("null").email("null2@null.null").id(2L).build();
     private final Item item = Item.builder().name("item").description("item test").owner(1L).available(true).id(1L).build();
@@ -42,7 +42,7 @@ class ItemControllerTest {
 
 
     @Test
-    public void shouldAddItem() throws Exception {
+    void shouldAddItem() throws Exception {
         when(itemService.addItem(any(), anyLong())).thenReturn(item);
         mvc.perform(post("/items")
                         .content(mapper.writeValueAsString(ItemDto.builder().build()))
@@ -57,7 +57,7 @@ class ItemControllerTest {
     }
 
     @Test
-    public void shouldAddComment() throws Exception {
+    void shouldAddComment() throws Exception {
         Comment comment = Comment.builder()
                                  .itemId(item.getId())
                                  .authorId(user.getId())
@@ -80,7 +80,7 @@ class ItemControllerTest {
     }
 
     @Test
-    public void shouldFindItemById() throws Exception {
+    void shouldFindItemById() throws Exception {
         when(itemService.findItemById(anyLong(), anyLong())).thenReturn(item);
 
         mvc.perform(get("/items/1")

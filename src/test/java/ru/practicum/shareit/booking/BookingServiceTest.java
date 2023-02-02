@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-class BookingServiceTest {
+public class BookingServiceTest {
     @Autowired
     private BookingService bookingService;
     @MockBean
@@ -50,7 +50,7 @@ class BookingServiceTest {
                                   .build();
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         LocalDateTime time = LocalDateTime.now();
         booking = Booking.builder()
                          .id(1L)
@@ -68,7 +68,7 @@ class BookingServiceTest {
     }
 
     @Test
-    public void shouldAddBooking() {
+    void shouldAddBooking() {
         when(itemRepository.findById(1L)).thenReturn(Optional.ofNullable(item));
         when(mockUserService.getUser(2L)).thenReturn(User.builder().id(2L).build());
         when(mockUserService.getUser(1L)).thenReturn(user);
@@ -82,53 +82,53 @@ class BookingServiceTest {
     }
 
     @Test
-    public void shouldThrowExceptionIfBookerIsOwner() {
+    void shouldThrowExceptionIfBookerIsOwner() {
         when(itemRepository.findById(1L)).thenReturn(Optional.ofNullable(item));
         when(mockUserService.getUser(2L)).thenReturn(User.builder().id(2L).build());
         when(mockUserService.getUser(1L)).thenReturn(user);
 
         RuntimeException ex = assertThrows(RuntimeException.class, () -> bookingService.addBooking(1L, bookingDto));
-        assertEquals(ex.getMessage(), "Owner can not book his item!");
+        assertEquals("Owner can not book his item!", ex.getMessage());
     }
 
     @Test
-    public void shouldThrowExceptionIfItemIsNotAvailable() {
+    void shouldThrowExceptionIfItemIsNotAvailable() {
         when(itemRepository.findById(1L)).thenReturn(Optional.ofNullable(item));
         when(mockUserService.getUser(2L)).thenReturn(User.builder().id(2L).build());
         when(mockUserService.getUser(1L)).thenReturn(user);
         Objects.requireNonNull(item).setAvailable(false);
         RuntimeException ex = assertThrows(RuntimeException.class, () -> bookingService.addBooking(2L, bookingDto));
-        assertEquals(ex.getMessage(), "Item is not available!");
+        assertEquals("Item is not available!", ex.getMessage());
         Objects.requireNonNull(item).setAvailable(true);
     }
 
     @Test
-    public void shouldThrowExceptionIfInvalidEndTime() {
+    void shouldThrowExceptionIfInvalidEndTime() {
         when(itemRepository.findById(1L)).thenReturn(Optional.ofNullable(item));
         when(mockUserService.getUser(2L)).thenReturn(User.builder().id(2L).build());
         when(mockUserService.getUser(1L)).thenReturn(user);
         bookingDto.setEnd(bookingDto.getStart().minusMinutes(1));
 
         RuntimeException ex1 = assertThrows(RuntimeException.class, () -> bookingService.addBooking(2L, bookingDto));
-        assertEquals(ex1.getMessage(), "Invalid end time of booking!");
+        assertEquals("Invalid end time of booking!", ex1.getMessage());
 
         bookingDto.setEnd(LocalDateTime.now().minusDays(1));
         RuntimeException ex2 = assertThrows(RuntimeException.class, () -> bookingService.addBooking(2L, bookingDto));
-        assertEquals(ex2.getMessage(), "Invalid end time of booking!");
+        assertEquals("Invalid end time of booking!", ex2.getMessage());
     }
 
     @Test
-    public void shouldThrowExceptionIfInvalidStartTime() {
+    void shouldThrowExceptionIfInvalidStartTime() {
         when(itemRepository.findById(1L)).thenReturn(Optional.ofNullable(item));
         when(mockUserService.getUser(2L)).thenReturn(User.builder().id(2L).build());
         when(mockUserService.getUser(1L)).thenReturn(user);
         bookingDto.setStart(LocalDateTime.now().minusDays(1));
         RuntimeException ex = assertThrows(RuntimeException.class, () -> bookingService.addBooking(2L, bookingDto));
-        assertEquals(ex.getMessage(), "Invalid start time of booking!");
+        assertEquals("Invalid start time of booking!", ex.getMessage());
     }
 
     @Test
-    public void shouldApproveBookingIfWaiting() {
+    void shouldApproveBookingIfWaiting() {
         when(mockBookingRepository.findById(1L)).thenReturn(Optional.ofNullable(booking));
         Booking copy = Booking.builder()
                               .id(booking.getId())
@@ -140,12 +140,12 @@ class BookingServiceTest {
                               .build();
         when(mockBookingRepository.save(any())).thenReturn(copy);
         Booking result = bookingService.updateBooking(booking.getItem().getOwner(), true, booking.getId());
-        assertEquals(result, copy);
-        assertEquals(result.getStatus(), Status.APPROVED);
+        assertEquals(copy, result);
+        assertEquals(Status.APPROVED, result.getStatus());
     }
 
     @Test
-    public void shouldRejectBookingIfWaiting() {
+    void shouldRejectBookingIfWaiting() {
         when(mockBookingRepository.findById(1L)).thenReturn(Optional.ofNullable(booking));
         Booking copy = Booking.builder()
                 .id(booking.getId())
@@ -157,60 +157,60 @@ class BookingServiceTest {
                 .build();
         when(mockBookingRepository.save(any())).thenReturn(copy);
         Booking result = bookingService.updateBooking(booking.getItem().getOwner(), false, booking.getId());
-        assertEquals(result, copy);
-        assertEquals(result.getStatus(), Status.REJECTED);
+        assertEquals(copy, result);
+        assertEquals(Status.REJECTED, result.getStatus());
     }
 
     @Test
-    public void shouldThrowExceptionIfBookingNotFound() {
+    void shouldThrowExceptionIfBookingNotFound() {
         when(mockBookingRepository.findById(any())).thenReturn(Optional.empty());
         RuntimeException ex = assertThrows(RuntimeException.class, () -> bookingService.updateBooking(1L, true, 2L));
-        assertEquals(ex.getMessage(), "Booking not found!");
+        assertEquals("Booking not found!", ex.getMessage());
     }
 
     @Test
-    public void shouldThrowExceptionIfUserIsNotAnOwner() {
+    void shouldThrowExceptionIfUserIsNotAnOwner() {
         when(mockBookingRepository.findById(1L)).thenReturn(Optional.ofNullable(booking));
         RuntimeException ex = assertThrows(RuntimeException.class, () -> bookingService.updateBooking(2L, true, 1L));
-        assertEquals(ex.getMessage(), "User is not an owner!");
+        assertEquals("User is not an owner!", ex.getMessage());
     }
 
     @Test
-    public void shouldThrowExceptionIfAlreadyApprovedOrRejected() {
+    void shouldThrowExceptionIfAlreadyApprovedOrRejected() {
         booking.setStatus(Status.APPROVED);
         when(mockBookingRepository.findById(1L)).thenReturn(Optional.ofNullable(booking));
         RuntimeException ex = assertThrows(RuntimeException.class, () -> bookingService.updateBooking(1L, true, 1L));
-        assertEquals(ex.getMessage(), "booking has been already approved/rejected");
+        assertEquals("booking has been already approved/rejected", ex.getMessage());
         booking.setStatus(Status.REJECTED);
         RuntimeException ex1 = assertThrows(RuntimeException.class, () -> bookingService.updateBooking(1L, true, 1L));
-        assertEquals(ex1.getMessage(), "booking has been already approved/rejected");
+        assertEquals("booking has been already approved/rejected", ex1.getMessage());
     }
 
     @Test
-    public void shouldFindBookingById() {
+    void shouldFindBookingById() {
         when(mockBookingRepository.findById(1L)).thenReturn(Optional.ofNullable(booking));
         Booking result = bookingService.getBookingById(1L, booking.getId());
-        assertEquals(result, booking);
+        assertEquals(booking, result);
     }
 
     @Test
-    public void shouldThrowExceptionWhenFindByIdAndUserIsNotAnOwnerOrBooker() {
+    void shouldThrowExceptionWhenFindByIdAndUserIsNotAnOwnerOrBooker() {
         when(mockBookingRepository.findById(1L)).thenReturn(Optional.ofNullable(booking));
         RuntimeException ex = assertThrows(RuntimeException.class, () -> bookingService.getBookingById(3L, 1L));
-        assertEquals(ex.getMessage(), "User is not an owner!");
+        assertEquals("User is not an owner!", ex.getMessage());
     }
 
     @Test
-    public void shouldReturnAllBookingsOfBooker() {
+    void shouldReturnAllBookingsOfBooker() {
         when(mockUserService.getUser(any())).thenReturn(user);
         when(mockBookingRepository.findBookingsByUserId(2L)).thenReturn(List.of(booking));
         List<Booking> bookings = bookingService.getAllByUserId(null, null, 2L, State.WAITING);
-        assertEquals(bookings.size(), 1);
-        assertEquals(bookings.get(0), booking);
+        assertEquals(1, bookings.size());
+        assertEquals(booking, bookings.get(0));
     }
 
     @Test
-    public void shouldReturnEmptyListIfWrongState() {
+    void shouldReturnEmptyListIfWrongState() {
         when(mockUserService.getUser(any())).thenReturn(user);
         when(mockBookingRepository.findBookingsByUserId(2L)).thenReturn(List.of(booking));
         List<Booking> bookings = bookingService.getAllByUserId(null, null, 2L, State.CURRENT);
@@ -218,31 +218,31 @@ class BookingServiceTest {
     }
 
     @Test
-    public void shouldThrowExceptionIfBookerNotFound() {
+    void shouldThrowExceptionIfBookerNotFound() {
         when(mockUserService.getUser(any())).thenReturn(null);
         RuntimeException ex = assertThrows(RuntimeException.class, () -> bookingService.getAllByUserId(null, null, 3L, State.WAITING));
-        assertEquals(ex.getMessage(), "User not found!");
+        assertEquals("User not found!", ex.getMessage());
     }
 
     @Test
-    public void shouldThrowExceptionIfBookerDoesNotHaveBookings() {
+    void shouldThrowExceptionIfBookerDoesNotHaveBookings() {
         when(mockUserService.getUser(any())).thenReturn(user);
         when(mockBookingRepository.findBookingsByUserId(2L)).thenReturn(new ArrayList<>());
         RuntimeException ex = assertThrows(RuntimeException.class, () -> bookingService.getAllByUserId(null, null, 2L, State.WAITING));
-        assertEquals(ex.getMessage(), "User does not have bookings!");
+        assertEquals("User does not have bookings!", ex.getMessage());
     }
 
     @Test
-    public void shouldFindAllBookingsOfOwner() {
+    void shouldFindAllBookingsOfOwner() {
         when(mockUserService.getUser(any())).thenReturn(user);
         when(mockBookingRepository.findBookingsByOwnerId(1L)).thenReturn(List.of(booking));
         List<Booking> bookings = bookingService.getAllByOwnerId(null, null, 1L, State.WAITING);
-        assertEquals(bookings.size(), 1);
-        assertEquals(bookings.get(0), booking);
+        assertEquals(1, bookings.size());
+        assertEquals(booking, bookings.get(0));
     }
 
     @Test
-    public void shouldReturnEmptyListOfOwnerBookingsIfWrongState() {
+    void shouldReturnEmptyListOfOwnerBookingsIfWrongState() {
         when(mockUserService.getUser(any())).thenReturn(user);
         when(mockBookingRepository.findBookingsByOwnerId(1L)).thenReturn(List.of(booking));
         List<Booking> bookings = bookingService.getAllByOwnerId(null, null, 1L, State.REJECTED);
@@ -250,17 +250,17 @@ class BookingServiceTest {
     }
 
     @Test
-    public void shouldThrowExceptionIfOwnerNotFound() {
+    void shouldThrowExceptionIfOwnerNotFound() {
         when(mockUserService.getUser(any())).thenReturn(null);
         RuntimeException ex = assertThrows(RuntimeException.class, () -> bookingService.getAllByOwnerId(null, null, 3L, State.WAITING));
-        assertEquals(ex.getMessage(), "User not found!");
+        assertEquals("User not found!", ex.getMessage());
     }
 
     @Test
-    public void shouldThrowExceptionIfOwnerDoesNotHaveBookings() {
+    void shouldThrowExceptionIfOwnerDoesNotHaveBookings() {
         when(mockUserService.getUser(any())).thenReturn(user);
         when(mockBookingRepository.findBookingsByUserId(1)).thenReturn(new ArrayList<>());
         RuntimeException ex = assertThrows(RuntimeException.class, () -> bookingService.getAllByOwnerId(null, null, 2L, State.WAITING));
-        assertEquals(ex.getMessage(), "User does not have bookings!");
+        assertEquals("User does not have bookings!", ex.getMessage());
     }
 }

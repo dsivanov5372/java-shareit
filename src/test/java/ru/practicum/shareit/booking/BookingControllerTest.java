@@ -43,6 +43,7 @@ class BookingControllerTest {
                                   .available(true)
                                   .build();
     private BookingDto bookingDto;
+    private Booking booking;
     @Autowired
     private ObjectMapper mapper;
     @MockBean
@@ -58,18 +59,18 @@ class BookingControllerTest {
                 .start(time.plusSeconds(1))
                 .end(time.plusSeconds(12))
                 .build();
+        booking = Booking.builder()
+                .id(1L)
+                .status(Status.WAITING)
+                .start(bookingDto.getStart())
+                .end(bookingDto.getEnd())
+                .item(item)
+                .booker(user)
+                .build();
     }
 
     @Test
     void addBookingAndReturnOkWithCode200() throws Exception {
-        Booking booking = Booking.builder()
-                                 .id(1L)
-                                 .status(Status.WAITING)
-                                 .start(bookingDto.getStart())
-                                 .end(bookingDto.getEnd())
-                                 .item(item)
-                                 .booker(user)
-                                 .build();
         when(bookingService.addBooking(anyLong(), any())).thenReturn(booking);
 
         mvc.perform(post("/bookings")
@@ -85,14 +86,6 @@ class BookingControllerTest {
 
     @Test
     void setBookingStatusApproveAndReturnOkAndCode200() throws Exception {
-        Booking booking = Booking.builder()
-                                 .id(1L)
-                                 .status(Status.WAITING)
-                                 .start(bookingDto.getStart())
-                                 .end(bookingDto.getEnd())
-                                 .item(item)
-                                 .booker(user)
-                                 .build();
         booking.setStatus(Status.APPROVED);
         when(bookingService.updateBooking(anyLong(), anyBoolean(), anyLong())).thenReturn(booking);
 
@@ -110,14 +103,6 @@ class BookingControllerTest {
 
     @Test
     void getBookingByIdAndReturnOkAndCode200() throws Exception {
-        Booking booking = Booking.builder()
-                                 .id(1L)
-                                 .status(Status.WAITING)
-                                 .start(bookingDto.getStart())
-                                 .end(bookingDto.getEnd())
-                                 .item(item)
-                                 .booker(user)
-                                 .build();
         when(bookingService.getBookingById(anyLong(), anyLong())).thenReturn(booking);
 
         mvc.perform(get("/bookings/1")
@@ -129,14 +114,6 @@ class BookingControllerTest {
 
     @Test
     void getAllBookingsByBookerIdAndReturnOkAndCode200() throws Exception {
-        Booking booking = Booking.builder()
-                                .id(1L)
-                                .status(Status.WAITING)
-                                .start(bookingDto.getStart())
-                                .end(bookingDto.getEnd())
-                                .item(item)
-                                .booker(user)
-                                .build();
         when(bookingService.getAllByUserId(anyInt(), anyInt(), anyLong(), any())).thenReturn(List.of(booking));
 
         mvc.perform(get("/bookings")
@@ -151,14 +128,6 @@ class BookingControllerTest {
 
     @Test
     void getAllBookingsByOwnerIdAndReturnOkAndCode200() throws Exception {
-        Booking booking = Booking.builder()
-                                 .id(1L)
-                                 .status(Status.WAITING)
-                                 .start(bookingDto.getStart())
-                                 .end(bookingDto.getEnd())
-                                 .item(item)
-                                 .booker(user)
-                                 .build();
         when(bookingService.getAllByOwnerId(anyInt(), anyInt(), anyLong(), any())).thenReturn(List.of(booking));
 
         mvc.perform(get("/bookings/owner")
