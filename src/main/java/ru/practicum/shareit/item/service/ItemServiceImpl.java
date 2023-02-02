@@ -3,6 +3,8 @@ package ru.practicum.shareit.item.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.booking.dto.CommentDto;
@@ -22,7 +24,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemMapper;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.paginator.Paginator;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -57,7 +58,7 @@ public class ItemServiceImpl implements ItemService {
     public List<Item> findAllByUserId(Integer from, Integer size, Long userId) throws UserNotFoundException {
         checkUserId(userId);
 
-        List<Item> items = itemRepository.findByOwnerOrderById(userId);
+        List<Item> items = itemRepository.findByOwnerOrderById(userId, PageRequest.of(from, size));
         for (Item item : items) {
             Booking last = bookingRepository.findTopBookingByItemIdOrderByStartAsc(item.getId());
             Booking next = bookingRepository.findFirstBookingByItemIdAndStartAfterOrderByStartAsc(item.getId(), LocalDateTime.now());
@@ -71,7 +72,7 @@ public class ItemServiceImpl implements ItemService {
             item.setComments(commentRepository.findCommentsByItemId(item.getId()));
         }
 
-        return Paginator.paginate(from, size, items);
+        return items;
     }
 
     @Override
@@ -101,7 +102,7 @@ public class ItemServiceImpl implements ItemService {
         if (text == null || text.isBlank()) {
             return new ArrayList<>();
         }
-        return Paginator.paginate(from, size, itemRepository.searchItemByText(text));
+        return itemRepository.searchItemByText(text, PageRequest.of(from, size));
     }
 
     @Override

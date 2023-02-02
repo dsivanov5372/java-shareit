@@ -3,6 +3,7 @@ package ru.practicum.shareit.items;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -35,7 +36,7 @@ public class ItemRepositoryTest {
         item.setOwner(user.getId());
         itemRepository.save(item);
 
-        List<Item> items = itemRepository.searchItemByText("eSt");
+        List<Item> items = itemRepository.searchItemByText("eSt", PageRequest.of(0, 20));
         assertEquals(1, items.size());
         assertEquals(item, items.get(0));
     }
@@ -46,7 +47,7 @@ public class ItemRepositoryTest {
         item.setOwner(user.getId());
         itemRepository.save(item);
 
-        List<Item> items = itemRepository.findByOwnerOrderById(item.getOwner());
+        List<Item> items = itemRepository.findByOwnerOrderById(item.getOwner(), PageRequest.of(0, 20));
         assertEquals(1, items.size());
         assertEquals(item, items.get(0));
     }

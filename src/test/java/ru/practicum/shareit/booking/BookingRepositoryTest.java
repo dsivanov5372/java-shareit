@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
@@ -47,7 +48,7 @@ public class BookingRepositoryTest {
         booking.setStatus(Status.WAITING);
         booking = bookingRepository.save(booking);
 
-        List<Booking> bookingList = bookingRepository.findBookingsByOwnerId(firstUser.getId());
+        List<Booking> bookingList = bookingRepository.findBookingsByOwnerId(firstUser.getId(), PageRequest.of(0, 20));
         assertEquals(booking, bookingList.get(0));
         assertEquals(1, bookingList.size());
     }
@@ -67,7 +68,7 @@ public class BookingRepositoryTest {
         booking.setStatus(Status.WAITING);
         booking = bookingRepository.save(booking);
 
-        List<Booking> bookingList = bookingRepository.findBookingsByUserId(secondUser.getId());
+        List<Booking> bookingList = bookingRepository.findAllByBookerId(secondUser.getId(), PageRequest.of(0, 20));
         assertEquals(booking, bookingList.get(0));
         assertEquals(1, bookingList.size());
     }

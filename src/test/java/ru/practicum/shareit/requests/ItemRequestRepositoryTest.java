@@ -3,6 +3,7 @@ package ru.practicum.shareit.requests;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -47,7 +48,7 @@ public class ItemRequestRepositoryTest {
         itemRequestRepository.save(request);
         item.setRequestId(request.getId());
         itemRepository.save(item);
-        List<ItemRequest> requests = itemRequestRepository.findAllByRequestorIdIsNot(user.getId());
+        List<ItemRequest> requests = itemRequestRepository.findAllByRequestorIdIsNot(user.getId(), PageRequest.of(0, 20));
         assertEquals(1, requests.size());
         assertEquals(request, requests.get(0));
     }

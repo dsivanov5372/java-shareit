@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
 import ru.practicum.shareit.booking.dto.CommentDto;
+import ru.practicum.shareit.exception.PageSizeException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
-
 
 @RestController
 @AllArgsConstructor
@@ -34,9 +34,10 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<Item> findAllByUserId(@RequestParam(required = false) Integer from,
-                                      @RequestParam(required = false) Integer size,
+    public List<Item> findAllByUserId(@RequestParam(required = false, defaultValue = "0") Integer from,
+                                      @RequestParam(required = false, defaultValue = "20") Integer size,
                                       @RequestHeader(header) Long userId) {
+        checkParams(from, size);
         return service.findAllByUserId(from, size, userId);
     }
 
@@ -47,9 +48,10 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<Item> findAllByText(@RequestParam(required = false) Integer from,
-                                    @RequestParam(required = false) Integer size,
+    public List<Item> findAllByText(@RequestParam(required = false, defaultValue = "0") Integer from,
+                                    @RequestParam(required = false, defaultValue = "20") Integer size,
                                     @RequestParam("text") String text) {
+        checkParams(from, size);
         return service.findAllByText(from, size, text);
     }
 
@@ -65,5 +67,11 @@ public class ItemController {
                               @PathVariable("itemId") Long itemId,
                               @RequestBody CommentDto comment) {
         return service.addComment(userId, itemId, comment);
+    }
+
+    private void checkParams(Integer from, Integer size) {
+        if (from < 0 || size < 1) {
+            throw new PageSizeException("Invalid pagination parameters!");
+        }
     }
 }

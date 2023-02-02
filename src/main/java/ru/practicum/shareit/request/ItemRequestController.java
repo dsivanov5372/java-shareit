@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
+import ru.practicum.shareit.exception.PageSizeException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.ItemRequestService;
@@ -32,9 +33,10 @@ public class ItemRequestController {
     }
 
     @GetMapping("/all")
-    public List<ItemRequest> getAllRequests(@RequestParam(required = false) Integer from,
-                                             @RequestParam(required = false) Integer size,
-                                             @RequestHeader(header) Long userId) {
+    public List<ItemRequest> getAllRequests(@RequestParam(required = false, defaultValue = "0") Integer from,
+                                            @RequestParam(required = false, defaultValue = "20") Integer size,
+                                            @RequestHeader(header) Long userId) {
+        checkParams(from, size);
         return service.getAllRequests(from, size, userId);
     }
 
@@ -48,5 +50,11 @@ public class ItemRequestController {
     public ItemRequest addRequest(@RequestHeader(header) Long userId,
                                   @Valid @RequestBody ItemRequestDto request) {
         return service.addRequest(userId, request);
+    }
+
+    private void checkParams(Integer from, Integer size) {
+        if (from < 0 || size < 1) {
+            throw new PageSizeException("Invalid pagination parameters!");
+        }
     }
 }

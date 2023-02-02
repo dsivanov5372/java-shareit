@@ -1,8 +1,12 @@
 package ru.practicum.shareit.booking.service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -16,7 +20,6 @@ import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.paginator.Paginator;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -105,12 +108,13 @@ public class BookingServiceImpl implements BookingService {
             throw new UserNotFoundException("User not found!");
         }
 
-        List<Booking> bookings = bookingRepository.findBookingsByUserId(userId);
+        List<Booking> bookings = bookingRepository.findAllByBookerId(userId, PageRequest.of(from / size, size,
+                                                                     Sort.by(Sort.Direction.DESC, "start")));
         if (bookings.isEmpty()) {
             throw new BookingException("User does not have bookings!");
         }
 
-        return Paginator.paginate(from, size, filterBookingsByState(bookings, state));
+        return filterBookingsByState(bookings, state);
     }
 
     @Override
@@ -119,12 +123,13 @@ public class BookingServiceImpl implements BookingService {
             throw new UserNotFoundException("User not found!");
         }
 
-        List<Booking> bookings = bookingRepository.findBookingsByOwnerId(userId);
+        List<Booking> bookings = bookingRepository.findBookingsByOwnerId(userId, PageRequest.of(from / size, size,
+                                                                         Sort.by(Sort.Direction.DESC, "start")));
         if (bookings.isEmpty()) {
             throw new BookingException("User does not have bookings!");
         }
 
-        return Paginator.paginate(from, size, filterBookingsByState(bookings, state));
+        return filterBookingsByState(bookings, state);
     }
 
     private List<Booking> filterBookingsByState(List<Booking> bookings, State state) {

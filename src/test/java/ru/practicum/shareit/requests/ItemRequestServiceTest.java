@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -20,8 +21,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -65,9 +65,9 @@ public class ItemRequestServiceTest {
     @Test
     void shouldReturnAllRequestsOfNotRequestor() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(itemRequestRepository.findAllByRequestorIdIsNot(anyLong())).thenReturn(List.of(request));
+        when(itemRequestRepository.findAllByRequestorIdIsNot(user.getId(), PageRequest.of(0, 20))).thenReturn(List.of(request));
         when(itemRepository.findAllByRequestId(anyLong())).thenReturn(List.of(item));
-        List<ItemRequest> requests = service.getAllRequests(null, null, user.getId());
+        List<ItemRequest> requests = service.getAllRequests(0, 20, user.getId());
         assertEquals(1, requests.size());
         assertEquals(request, requests.get(0));
     }

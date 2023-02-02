@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.State;
@@ -203,8 +205,9 @@ public class BookingServiceTest {
     @Test
     void shouldReturnAllBookingsOfBooker() {
         when(mockUserService.getUser(any())).thenReturn(user);
-        when(mockBookingRepository.findBookingsByUserId(2L)).thenReturn(List.of(booking));
-        List<Booking> bookings = bookingService.getAllByUserId(null, null, 2L, State.WAITING);
+        when(mockBookingRepository.findAllByBookerId(2L, PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "start"))))
+             .thenReturn(List.of(booking));
+        List<Booking> bookings = bookingService.getAllByUserId(0, 20, 2L, State.WAITING);
         assertEquals(1, bookings.size());
         assertEquals(booking, bookings.get(0));
     }
@@ -212,8 +215,9 @@ public class BookingServiceTest {
     @Test
     void shouldReturnEmptyListIfWrongState() {
         when(mockUserService.getUser(any())).thenReturn(user);
-        when(mockBookingRepository.findBookingsByUserId(2L)).thenReturn(List.of(booking));
-        List<Booking> bookings = bookingService.getAllByUserId(null, null, 2L, State.CURRENT);
+        when(mockBookingRepository.findAllByBookerId(2L, PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "start"))))
+             .thenReturn(List.of(booking));
+        List<Booking> bookings = bookingService.getAllByUserId(0, 20, 2L, State.CURRENT);
         assertTrue(bookings.isEmpty());
     }
 
@@ -227,16 +231,18 @@ public class BookingServiceTest {
     @Test
     void shouldThrowExceptionIfBookerDoesNotHaveBookings() {
         when(mockUserService.getUser(any())).thenReturn(user);
-        when(mockBookingRepository.findBookingsByUserId(2L)).thenReturn(new ArrayList<>());
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> bookingService.getAllByUserId(null, null, 2L, State.WAITING));
+        when(mockBookingRepository.findAllByBookerId(2L, PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "start"))))
+             .thenReturn(new ArrayList<>());
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> bookingService.getAllByUserId(0, 20, 2L, State.WAITING));
         assertEquals("User does not have bookings!", ex.getMessage());
     }
 
     @Test
     void shouldFindAllBookingsOfOwner() {
         when(mockUserService.getUser(any())).thenReturn(user);
-        when(mockBookingRepository.findBookingsByOwnerId(1L)).thenReturn(List.of(booking));
-        List<Booking> bookings = bookingService.getAllByOwnerId(null, null, 1L, State.WAITING);
+        when(mockBookingRepository.findBookingsByOwnerId(1L, PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "start"))))
+             .thenReturn(List.of(booking));
+        List<Booking> bookings = bookingService.getAllByOwnerId(0, 20, 1L, State.WAITING);
         assertEquals(1, bookings.size());
         assertEquals(booking, bookings.get(0));
     }
@@ -244,8 +250,9 @@ public class BookingServiceTest {
     @Test
     void shouldReturnEmptyListOfOwnerBookingsIfWrongState() {
         when(mockUserService.getUser(any())).thenReturn(user);
-        when(mockBookingRepository.findBookingsByOwnerId(1L)).thenReturn(List.of(booking));
-        List<Booking> bookings = bookingService.getAllByOwnerId(null, null, 1L, State.REJECTED);
+        when(mockBookingRepository.findBookingsByOwnerId(1L, PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "start"))))
+             .thenReturn(List.of(booking));
+        List<Booking> bookings = bookingService.getAllByOwnerId(0, 20, 1L, State.REJECTED);
         assertTrue(bookings.isEmpty());
     }
 
@@ -259,8 +266,8 @@ public class BookingServiceTest {
     @Test
     void shouldThrowExceptionIfOwnerDoesNotHaveBookings() {
         when(mockUserService.getUser(any())).thenReturn(user);
-        when(mockBookingRepository.findBookingsByUserId(1)).thenReturn(new ArrayList<>());
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> bookingService.getAllByOwnerId(null, null, 2L, State.WAITING));
+        when(mockBookingRepository.findAllByBookerId(1L, PageRequest.of(0, 20))).thenReturn(new ArrayList<>());
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> bookingService.getAllByOwnerId(0, 20, 2L, State.WAITING));
         assertEquals("User does not have bookings!", ex.getMessage());
     }
 }

@@ -2,13 +2,13 @@ package ru.practicum.shareit.request.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
 import ru.practicum.shareit.exception.RequestNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.paginator.Paginator;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
@@ -38,7 +38,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequest> getAllRequests(Integer from, Integer size, Long userId) {
         checkUserId(userId);
-        List<ItemRequest> requests = Paginator.paginate(from, size, itemRequestRepository.findAllByRequestorIdIsNot(userId));
+        List<ItemRequest> requests = itemRequestRepository.findAllByRequestorIdIsNot(userId, PageRequest.of(from, size));
         requests.forEach(request -> request.getItems().addAll(itemRepository.findAllByRequestId(request.getId())));
         return requests;
     }

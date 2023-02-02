@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.booking.dto.CommentDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -24,8 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -72,7 +72,7 @@ public class ItemServiceTest {
 
     @Test
     void shouldReturnAllItemOfOwner() {
-        when(itemRepository.findByOwnerOrderById(anyLong())).thenReturn(List.of(item));
+        when(itemRepository.findByOwnerOrderById(item.getOwner(), PageRequest.of(0, 20))).thenReturn(List.of(item));
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
         Booking last = Booking.builder().id(1L).booker(User.builder().id(2L).build()).build();
         Booking next = Booking.builder().id(2L).booker(User.builder().id(2L).build()).build();
@@ -80,7 +80,7 @@ public class ItemServiceTest {
         when(bookingRepository.findTopBookingByItemIdOrderByStartAsc(1L)).thenReturn(last);
         when(bookingRepository.findFirstBookingByItemIdAndStartAfterOrderByStartAsc(anyLong(), any())).thenReturn(next);
         when(commentRepository.findCommentsByItemId(any())).thenReturn(List.of(comment));
-        List<Item> items = service.findAllByUserId(null, null, Objects.requireNonNull(item).getOwner());
+        List<Item> items = service.findAllByUserId(0, 20, Objects.requireNonNull(item).getOwner());
         assertEquals(1, items.size());
         assertEquals(item, items.get(0));
         item.setLastBooking(null);
@@ -121,8 +121,8 @@ public class ItemServiceTest {
 
     @Test
     void shouldReturnItemsWithTextInNameOrDescription() {
-        when(itemRepository.searchItemByText("est")).thenReturn(List.of(item));
-        List<Item> items = service.findAllByText(null, null, "est");
+        when(itemRepository.searchItemByText("est", PageRequest.of(0, 20))).thenReturn(List.of(item));
+        List<Item> items = service.findAllByText(0, 20, "est");
         assertEquals(1, items.size());
         assertEquals(item, items.get(0));
     }
