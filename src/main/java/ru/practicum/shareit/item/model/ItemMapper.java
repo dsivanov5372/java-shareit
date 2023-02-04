@@ -10,6 +10,7 @@ public class ItemMapper {
                    .description(itemDto.getDescription())
                    .name(itemDto.getName())
                    .owner(userId)
+                   .requestId(itemDto.getRequestId())
                    .build();
     }
 }

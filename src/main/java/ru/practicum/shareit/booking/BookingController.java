@@ -18,6 +18,8 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.InvalidStateException;
+import ru.practicum.shareit.exception.PageSizeException;
+
 
 @RestController
 @RequestMapping("/bookings")
@@ -46,17 +48,29 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<Booking> getAllByUserId(@RequestHeader(header) Long userId,
-                                        @RequestParam(value = "state", defaultValue = "ALL") String state) {
+    public List<Booking> getAllByUserId(@RequestParam(required = false, defaultValue = "0") Integer from,
+                                        @RequestParam(required = false, defaultValue = "20") Integer size,
+                                        @RequestHeader(header) Long userId,
+                                        @RequestParam(required = false, defaultValue = "ALL") String state) {
         checkState(state);
-        return service.getAllByUserId(userId, State.valueOf(state));
+        checkParams(from, size);
+        return service.getAllByUserId(from, size, userId, State.valueOf(state));
     }
 
     @GetMapping("/owner")
-    public List<Booking> getAllByOwnerId(@RequestHeader(header) Long userId,
-                                         @RequestParam(value = "state", defaultValue = "ALL") String state) {
+    public List<Booking> getAllByOwnerId(@RequestParam(required = false, defaultValue = "0") Integer from,
+                                         @RequestParam(required = false, defaultValue = "20") Integer size,
+                                         @RequestHeader(header) Long userId,
+                                         @RequestParam(required = false, defaultValue = "ALL") String state) {
         checkState(state);
-        return service.getAllByOwnerId(userId, State.valueOf(state));
+        checkParams(from, size);
+        return service.getAllByOwnerId(from, size, userId, State.valueOf(state));
+    }
+
+    private void checkParams(Integer from, Integer size) {
+        if (from < 0 || size < 1) {
+            throw new PageSizeException("Invalid pagination params!");
+        }
     }
 
     private void checkState(String state) {

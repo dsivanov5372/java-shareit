@@ -2,8 +2,6 @@ package ru.practicum.shareit.item;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
 import ru.practicum.shareit.booking.dto.CommentDto;
+import ru.practicum.shareit.exception.PageSizeException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
-
 
 @RestController
 @AllArgsConstructor
@@ -30,37 +28,50 @@ public class ItemController {
     private final String header = "X-Sharer-User-Id";
 
     @PostMapping
-    public Item addItem(@Valid @RequestBody ItemDto item,
-                        @RequestHeader(value = header, required = true) Long userId) {
+    public Item addItem(@RequestBody ItemDto item,
+                        @RequestHeader(header) Long userId) {
         return service.addItem(item, userId);
     }
 
     @GetMapping
-    public List<Item> findAllByUserId(@RequestHeader(value = header, required = true) Long userId) {
-        return service.findAllByUserId(userId);
+    public List<Item> findAllByUserId(@RequestParam(required = false, defaultValue = "0") Integer from,
+                                      @RequestParam(required = false, defaultValue = "20") Integer size,
+                                      @RequestHeader(header) Long userId) {
+        checkParams(from, size);
+        return service.findAllByUserId(from, size, userId);
     }
 
     @GetMapping("/{itemId}")
-    public Item findItemById(@RequestHeader(value = "X-Sharer-User-Id") Long userId,
+    public Item findItemById(@RequestHeader(header) Long userId,
                              @PathVariable("itemId") Long itemId) {
         return service.findItemById(userId, itemId);
     }
 
     @GetMapping("/search")
-    public List<Item> findAllByText(@RequestParam("text") String text) {
-        return service.findAllByText(text);
+    public List<Item> findAllByText(@RequestParam(required = false, defaultValue = "0") Integer from,
+                                    @RequestParam(required = false, defaultValue = "20") Integer size,
+                                    @RequestParam("text") String text) {
+        checkParams(from, size);
+        return service.findAllByText(from, size, text);
     }
 
     @PatchMapping("/{itemId}")
-    public Item updateItem(@RequestHeader(value = header, required = true) Long userId,
-                           @PathVariable("itemId") Long itemId, @Valid @RequestBody ItemDto item) {
+    public Item updateItem(@RequestHeader(header) Long userId,
+                           @PathVariable("itemId") Long itemId,
+                           @RequestBody ItemDto item) {
         return service.updateItem(userId, itemId, item);
     }
 
     @PostMapping("/{itemId}/comment")
-    public Comment addComment(@RequestHeader(value = header, required = true) Long userId,
+    public Comment addComment(@RequestHeader(header) Long userId,
                               @PathVariable("itemId") Long itemId,
                               @RequestBody CommentDto comment) {
         return service.addComment(userId, itemId, comment);
+    }
+
+    private void checkParams(Integer from, Integer size) {
+        if (from < 0 || size < 1) {
+            throw new PageSizeException("Invalid pagination parameters!");
+        }
     }
 }

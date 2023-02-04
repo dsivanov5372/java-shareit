@@ -3,6 +3,8 @@ package ru.practicum.shareit.item.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.booking.dto.CommentDto;
@@ -33,7 +35,7 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
 
-    public void checkUserId(Long userId) throws UserNotFoundException {
+    private void checkUserId(Long userId) throws UserNotFoundException {
         if (userRepository.findById(userId).isEmpty()) {
             throw new UserNotFoundException("User not found!");
         }
@@ -48,14 +50,15 @@ public class ItemServiceImpl implements ItemService {
             item.getAvailable() == null) {
             throw new InvalidItemRequestException("Invalid item fields");
         }
-        return itemRepository.save(ItemMapper.toItem(item, userId));
+        Item toSave = ItemMapper.toItem(item, userId);
+        return itemRepository.save(toSave);
     }
 
     @Override
-    public List<Item> findAllByUserId(Long userId) throws UserNotFoundException {
+    public List<Item> findAllByUserId(Integer from, Integer size, Long userId) throws UserNotFoundException {
         checkUserId(userId);
 
-        List<Item> items = itemRepository.findByOwnerOrderById(userId);
+        List<Item> items = itemRepository.findByOwnerOrderById(userId, PageRequest.of(from, size));
         for (Item item : items) {
             Booking last = bookingRepository.findTopBookingByItemIdOrderByStartAsc(item.getId());
             Booking next = bookingRepository.findFirstBookingByItemIdAndStartAfterOrderByStartAsc(item.getId(), LocalDateTime.now());
@@ -95,11 +98,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> findAllByText(String text) {
+    public List<Item> findAllByText(Integer from, Integer size, String text) {
         if (text == null || text.isBlank()) {
             return new ArrayList<>();
         }
-        return itemRepository.searchItemByText(text);
+        return itemRepository.searchItemByText(text, PageRequest.of(from, size));
     }
 
     @Override
@@ -119,6 +122,9 @@ public class ItemServiceImpl implements ItemService {
         }
         if (itemDto.getAvailable() != null) {
             item.setAvailable(itemDto.getAvailable());
+        }
+        if (itemDto.getRequestId() != null) {
+            item.setRequestId(itemDto.getRequestId());
         }
         item = itemRepository.save(item);
 

@@ -10,11 +10,11 @@ import ru.practicum.shareit.item.model.Item;
 public interface ItemService {
     Item addItem(ItemDto item, Long userId);
 
-    List<Item> findAllByUserId(Long userId);
+    List<Item> findAllByUserId(Integer from, Integer size, Long userId);
 
     Item findItemById(Long userId, Long itemId);
 
-    List<Item> findAllByText(String text);
+    List<Item> findAllByText(Integer from, Integer size, String text);
 
     Item updateItem(Long userId, Long itemId, ItemDto item);
 

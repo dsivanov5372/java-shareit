@@ -35,7 +35,7 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public User update(@Valid @PathVariable Long userId, @RequestBody UserDto userDto)
+    public User update(@PathVariable Long userId, @Valid @RequestBody UserDto userDto)
         throws InvalidEmailException, UserAlreadyRegisteredException {
         return service.updateUser(userId, userDto);
     }

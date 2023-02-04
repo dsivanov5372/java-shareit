@@ -1,6 +1,8 @@
 package ru.practicum.shareit.user.service;
 
 import java.util.List;
+import java.util.Objects;
+
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.exception.InvalidEmailException;
@@ -49,8 +51,11 @@ public class UserServiceImpl implements UserService {
     public User updateUser(Long userId, UserDto userDto)
         throws InvalidEmailException, UserAlreadyRegisteredException {
         String email = userDto.getEmail();
-        if (email != null && userRepository.findByEmail(email) != null) {
-            throw new UserAlreadyRegisteredException("Email address is used");
+        if (email != null) {
+            User user = userRepository.findByEmail(email);
+            if (user != null && user.getEmail().equals(email) && !Objects.equals(user.getId(), userId)) {
+                throw new UserAlreadyRegisteredException("Email address is used");
+            }
         }
 
         User user = userRepository.findById(userId)

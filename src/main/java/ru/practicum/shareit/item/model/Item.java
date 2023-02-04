@@ -2,13 +2,7 @@ package ru.practicum.shareit.item.model;
 
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,6 +31,9 @@ public class Item {
 
     @Column(name = "owner_id", nullable = false)
     Long owner;
+
+    @Column(name = "request_id", nullable = false)
+    Long requestId;
 
     @Transient
     BookingInfo lastBooking;

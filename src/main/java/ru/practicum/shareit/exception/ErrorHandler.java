@@ -20,7 +20,8 @@ public class ErrorHandler {
                                 InvalidCommentDateException.class,
                                 BookingException.class,
                                 InvalidStateException.class,
-                                ConstraintViolationException.class })
+                                ConstraintViolationException.class,
+                                PageSizeException.class })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidEmailException(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());
@@ -28,7 +29,8 @@ public class ErrorHandler {
 
     @ExceptionHandler(value = { UserNotFoundException.class,
                                 BookingNotFoundException.class,
-                                ItemNotFoundException.class})
+                                ItemNotFoundException.class,
+                                RequestNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());

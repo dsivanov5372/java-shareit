@@ -3,6 +3,9 @@ package ru.practicum.shareit.booking.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -99,12 +102,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllByUserId(Long userId, State state) {
+    public List<Booking> getAllByUserId(Integer from, Integer size, Long userId, State state) {
         if (userService.getUser(userId) == null) {
             throw new UserNotFoundException("User not found!");
         }
 
-        List<Booking> bookings = bookingRepository.findBookingsByUserId(userId);
+        List<Booking> bookings = bookingRepository.findAllByBookerId(userId, PageRequest.of(from / size, size,
+                                                                     Sort.by(Sort.Direction.DESC, "start")));
         if (bookings.isEmpty()) {
             throw new BookingException("User does not have bookings!");
         }
@@ -113,12 +117,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllByOwnerId(Long userId, State state) {
+    public List<Booking> getAllByOwnerId(Integer from, Integer size, Long userId, State state) {
         if (userService.getUser(userId) == null) {
             throw new UserNotFoundException("User not found!");
         }
 
-        List<Booking> bookings = bookingRepository.findBookingsByOwnerId(userId);
+        List<Booking> bookings = bookingRepository.findBookingsByOwnerId(userId, PageRequest.of(from / size, size,
+                                                                         Sort.by(Sort.Direction.DESC, "start")));
         if (bookings.isEmpty()) {
             throw new BookingException("User does not have bookings!");
         }
