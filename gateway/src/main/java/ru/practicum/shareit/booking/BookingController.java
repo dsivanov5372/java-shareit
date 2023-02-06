@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.AllArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +45,7 @@ public class BookingController {
 
 	@PostMapping
 	public ResponseEntity<Object> createBooking(@RequestHeader(header) Long userId,
-										 @RequestBody BookingDto bookingRequestDto) {
+										 		@RequestBody BookingDto bookingRequestDto) {
 		return bookingClient.createBooking(userId, bookingRequestDto);
 	}
 

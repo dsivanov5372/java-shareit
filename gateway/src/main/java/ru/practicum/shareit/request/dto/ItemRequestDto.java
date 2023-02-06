@@ -6,8 +6,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.NotEmpty;
-
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,7 +15,6 @@ import lombok.Data;
 public class ItemRequestDto {
     Long id;
     Long userId;
-    @NotEmpty
     String description;
     LocalDateTime created;
     @Builder.Default
