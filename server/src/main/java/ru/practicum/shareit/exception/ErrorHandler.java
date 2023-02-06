@@ -19,9 +19,7 @@ public class ErrorHandler {
                                 EmptyCommentException.class,
                                 InvalidCommentDateException.class,
                                 BookingException.class,
-                                InvalidStateException.class,
-                                ConstraintViolationException.class,
-                                PageSizeException.class })
+                                ConstraintViolationException.class })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidEmailException(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());
