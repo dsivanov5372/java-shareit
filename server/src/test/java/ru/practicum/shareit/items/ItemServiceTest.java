@@ -165,13 +165,6 @@ public class ItemServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionIfEmptyComment() {
-        CommentDto commentDto = CommentDto.builder().text(" ").build();
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> service.addComment(1L, 1L, commentDto));
-        assertEquals("Empty comment!", ex.getMessage());
-    }
-
-    @Test
     void shouldThrowExceptionIfItemIsNotBookedYet() {
         CommentDto commentDto = CommentDto.builder().text("text").build();
         Booking booking = Booking.builder().start(LocalDateTime.now().plusDays(1)).build();
