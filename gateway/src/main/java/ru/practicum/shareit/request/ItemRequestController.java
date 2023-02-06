@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/requests")
@@ -36,7 +38,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ResponseEntity<Object> createItemRequest(@RequestHeader(header) Long userId,
-                                                    @RequestBody ItemRequestDto requestDto) {
+                                                    @Valid @RequestBody ItemRequestDto requestDto) {
         return itemRequestClient.createItemRequest(userId, requestDto);
     }
 
