@@ -11,7 +11,6 @@ import ru.practicum.shareit.booking.dto.CommentDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.exception.EmptyCommentException;
 import ru.practicum.shareit.exception.BookingException;
 import ru.practicum.shareit.exception.InvalidCommentDateException;
 import ru.practicum.shareit.exception.InvalidItemRequestException;

@@ -16,7 +16,6 @@ public class ErrorHandler {
 
     @ExceptionHandler(value = { InvalidItemRequestException.class,
                                 InvalidEmailException.class,
-                                EmptyCommentException.class,
                                 InvalidCommentDateException.class,
                                 BookingException.class,
                                 ConstraintViolationException.class })
