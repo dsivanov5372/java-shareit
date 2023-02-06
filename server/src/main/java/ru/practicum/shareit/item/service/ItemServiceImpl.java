@@ -133,10 +133,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Comment addComment(Long userId, Long itemId, CommentDto comment) {
-        if (comment.getText() == null || comment.getText().isBlank()) {
-            throw new EmptyCommentException("Empty comment!");
-        }
-
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found!"));
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
         Booking booking = bookingRepository.findFirstBookingByItemIdAndBookerIdAndStatusOrderByStartAsc(itemId, userId, Status.APPROVED)

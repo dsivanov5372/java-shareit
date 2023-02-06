@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Controller
 @AllArgsConstructor
 @RequestMapping("/users")
@@ -24,13 +26,13 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createUser(@RequestBody UserDto requestDto) {
+    public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto requestDto) {
         return userClient.createUser(requestDto);
     }
 
     @PatchMapping("/{userId}")
     public ResponseEntity<Object> updateUser(@PathVariable Long userId,
-                                             @RequestBody UserDto requestDto) {
+                                             @Valid @RequestBody UserDto requestDto) {
         return userClient.updateUser(userId, requestDto);
     }
 

@@ -10,6 +10,8 @@ import ru.practicum.shareit.exception.PageSizeException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
+import javax.validation.Valid;
+
 @Controller
 @AllArgsConstructor
 @RequestMapping("/items")
@@ -49,7 +51,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<Object> createComment(@RequestHeader(header) Long userId,
                                                 @PathVariable Long itemId,
-                                                @RequestBody CommentDto commentDto) {
+                                                @Valid @RequestBody CommentDto commentDto) {
         return itemClient.createComment(itemId, userId, commentDto);
     }
 
